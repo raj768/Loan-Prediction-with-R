@@ -189,35 +189,35 @@ dtree_test.perf <- table(testnew$Loan_Status, dtree_test.pred,
                     dnn=c("Actual", "Predicted"))
 dtree_test.perf
 
-###Random Forest
+### XGBoost
 
-library(randomForest) 
-set.seed(42) 
-fit.forest <- randomForest(Loan_Status ~ Credit_History+Education+Self_Employed+Property_Area+LogLoanAmount+
-                             LogIncome, data=trainnew,
-                           na.action=na.roughfix,
-                           importance=TRUE)
-fit.forest
+library(xgboost)
 
-importance(fit.forest, type=2)
+# Set a random seed for reproducibility
+set.seed(42)
 
-forest.pred <- predict(fit.forest, testnew)
-forest.perf <- table(testnew$Loan_Status, forest.pred,
-                     dnn=c("Actual", "Predicted"))
-forest.perf
+# Create an XGBoost model
+fit.xgb <- xgboost(data = as.matrix(trainnew[, -c("Loan_ID", "Loan_Status")]),
+                   label = as.numeric(trainnew$Loan_Status) - 1,  # Convert Loan_Status to binary (0/1)
+                   nrounds = 100,  # Number of boosting rounds
+                   objective = "binary:logistic",  # Binary classification
+                   max.depth = 3,  # Maximum tree depth
+                   eta = 0.3)  # Learning rate
+
+# Make predictions
+xgb.pred <- predict(fit.xgb, as.matrix(testnew[, -c("Loan_ID", "Loan_Status")]), type = "response")
+
+# Convert predicted probabilities to binary (0/1)
+xgb.pred <- ifelse(xgb.pred > 0.5, 1, 0)
+
+# Create a confusion matrix to evaluate the model's performance
+xgb.perf <- table(testnew$Loan_Status, xgb.pred,
+                  dnn = c("Actual", "Predicted"))
+
+# Display the confusion matrix
+xgb.perf
 
 
-# Use the highest 3 in importance
-set.seed(42) 
-fit.forest2 <- randomForest(Loan_Status ~ Credit_History+LogLoanAmount+
-                             LogIncome, data=trainnew,importance=TRUE)
-fit.forest2
-
-
-forest.pred2 <- predict(fit.forest2, testnew)
-forest.perf_test <- table(testnew$Loan_Status, forest.pred2,
-                     dnn=c("Actual", "Predicted"))
-forest.perf_test
 
 my_solution <- data.frame(Loan_ID = testnew$Loan_ID, Loan_Status = forest.pred2)
 # Write your solution away to a csv file with the name my_solution.csv
