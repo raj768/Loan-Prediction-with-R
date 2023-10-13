@@ -39,6 +39,15 @@ To ensure data quality, the project checks for anomalies and missing values in t
 
 To prepare the data for modeling, various data preprocessing steps are performed. Missing values are imputed using the Multiple Imputation by Chained Equations (MICE) method. Outliers are treated using log transformations for Loan Amount and Applicant Income. Additionally, a new variable, Total Income, is created by combining Applicant Income and Co-applicant Income.
 
+## Statistical Analysis
+
+We conducted a thorough statistical analysis of the dataset to gain insights and identify patterns. This analysis included:
+
+- Data exploration to understand the distribution and characteristics of the variables.
+- Treatment of missing data and outliers to ensure data quality.
+- Visualization of data through histograms, box plots, and bar charts to identify trends and patterns.
+- Handling of categorical variables and data transformation to improve model performance.
+
 ## Building Predictive Models
 
 ### Logistic Regression
